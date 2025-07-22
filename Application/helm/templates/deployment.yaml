@@ -14,6 +14,9 @@ spec:
     spec:
       containers:
         - resources: {}
+          volumeMounts:
+            - name: index-html
+              mountPath: /tmp/html
           terminationMessagePath: /dev/termination-log
           name: {{ .Chart.Name }}
           ports:
@@ -24,6 +27,11 @@ spec:
           image: {{ .Values.containers.image }}:{{ .Values.containers.tag }}
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
+      volumes:
+            - name: index-html
+              configMap:
+                name: '{{ .Chart.Name }}-html'
+                defaultMode: 420
   strategy:
     type: RollingUpdate
     rollingUpdate:
