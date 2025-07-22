@@ -14,6 +14,26 @@ spec:
     spec:
       containers:
         - resources: {}
+          readinessProbe:
+            httpGet:
+              path: /health/readiness # this check the application url path
+              port: {{ .Values.containers.containerPort  }} # In which port the Application is listening
+              scheme: HTTP
+            initialDelaySeconds: 1 # the time is waiting befor testing the application path
+            timeoutSeconds: 1 # the time for timeout
+            periodSeconds: 10 # the abount of time to wait between checks
+            successThreshold: 1 # count to decalre seccessfull 
+            failureThreshold: 3 # count to decalre failure
+          livenessProbe:
+            httpGet:
+              path: /health/liveliness
+              port: {{ .Values.containers.containerPort }}
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
           volumeMounts:
             - name: index-html
               mountPath: /tmp/html
@@ -28,10 +48,13 @@ spec:
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:
-            - name: index-html
-              configMap:
-                name: '{{ .Chart.Name }}-html'
-                defaultMode: 420
+        - name: index-html
+          configMap:
+            name: '{{ .Chart.Name }}-html'
+            defaultMode: 420
+      env:
+        - name: PORT
+          value: {{ .Values.containers.containerPort | quote }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
