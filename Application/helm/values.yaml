@@ -2,8 +2,8 @@ ReplicaNumber: 3
 
 containers:
   containerPort: 8080
-  image: "quay.io/idan052545/redhat:v2"
-  tag: "base"
+  image: "quay.io/idan052545/redhat"
+  tag: "chart_v1"
 
 service:
   servicePort: 8080
